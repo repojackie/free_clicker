@@ -1,32 +1,43 @@
-from flask import Flask, render_template, session, request, redirect
+from flask import Flask, request, render_template, redirect, url_for
 from flask_socketio import SocketIO
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'bagels123are123delicious'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlitte://test.db'
+app.config['SECRET_KEY'] = 'anarbitrarykeysowhatevs123'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Database.db'
 db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
 socketio = SocketIO(app)
 
-class User(db.Model):
+class User(UserMixin, db.Model):
+    __tablename__ = "User"
+
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True)
+    username = db.Column(db.String(15), unique=True)
+    email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
 
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
+    # unsure about this - list of joined sessions
+    sessions = db.Column(db.Text())
 
+class Rooms(db.Model):
+    __tablename__ = "Rooms"
+    id = db.Column(db.Integer, primary_key=True)
+    owner = relationship("User", back_populates="Rooms" # links to username (!!)
+    room_key = db.Column(db.String(20), unique=True)
 
-@app.route('/', methods=['GET', 'POST'])
-def index_login():
-    if not session.get('logged_in'):
-        return render_template('login.html')
-    return render_template('login.html')
+# sign in page 
+    # Student table - username, password, respective email
 
-@app.route('/mainpage')
-@login_required
-def mainpage():
-    return render_template("mainpage.html")
+# select classes page
+    # Room page - Owner, key to room, attendees 
 
-if __name__ == "__main__":
-    socketio.run(app, debug=True)
+# student view - multiple choice/multimedia/short response
+    # live response to what the teacher emits 
+
+# teacher view - serve out questions 
+    # collect and save responses onto local computer from the students
+
