@@ -41,7 +41,7 @@ class User(UserMixin, db.Model):
 class Rooms(db.Model):
     __tablename__ = "Rooms"
     id = db.Column(db.Integer, primary_key=True)
-    owner = db.relationship("User", back_populates="Rooms") # links to username (!!)
+    owner = db.relationship("User", ForeignKey('User.username')) # links to username (!!)
     room_key = db.Column(db.String(20), unique=True)
     room_pwd = db.Column(db.String(20))
 
@@ -57,7 +57,7 @@ def login():
     messages = []
     if request.method == "POST":
         # someone already has an account who wants to sign in
-        if request.form['verify'] == 'I already have an account':
+        if request.form.get('verify') is not None and request.form['verify']  == 'I already have an account':
             # how to manage signing in on the same page?
             return render_template('login.html', verified=True)
 
@@ -65,7 +65,7 @@ def login():
         if username_verified is not None:
             # checking to see if these things are in the db
             password_verified = request.form['password_verified']
-            user = User.objects(username=username_verified, password=password_verified).first()
+            user = User.query.filter_by(username=username_verified, password=password_verified).first()
             if user:
                 login_user(user)
                 return redirect(url_for(classes))
