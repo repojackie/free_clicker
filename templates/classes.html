@@ -10,9 +10,10 @@
 
 			{% for session in sessions %}
 			<h2> session </h2>
-
+			<hr>
 			<label for="{{session}}"> Join </label>
 			<input type=submit value="{{session}}", name="{{session}}" >
+			<hr>
 			{% endfor %}
 
 			<form action="/classes", method="POST">
@@ -27,10 +28,12 @@
 			<h1> Start a session </h1>
 
 			{% for session in sessions %}
+			<hr>
 			<h2> session </h1>
 
 			<label for="{{session}}"> Start this session </label>
 			<input type="submit" value="{{session}}" name="{{session}}">
+			<hr>
 			{% endfor %}
 
 			<form action="/classes", method="POST">

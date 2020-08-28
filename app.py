@@ -107,11 +107,16 @@ def classes():
     if request.method == "POST":
         # check if it is create new class
         if request.form.get('start') is not None:
-            # start a session owned by the user
-            pass
+            # query database for classes owned by user 
+            sessions = Rooms.query.all(owner=current_user.username)
+    
+            return render_template('classes.html', sessions=sessions)
         elif request.form.get('join') is not None:
+            sessions = User.query.filter_by(username=current_user.username)
+            print(sessions)
+
             # join a session owned by another user
-            pass
+            return render_template('classes.html', sessions=sessions)
         elif request.form.get('create_add') is not None:
             # create a new session or add an existing session
             return(render_template('create.html'))
