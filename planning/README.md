@@ -7,6 +7,8 @@ https://medium.com/hackervalleystudio/weekend-project-part-2-turning-flask-into-
 
 https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_orm_building_relationship.htm -> For ORM
 
+https://buildmedia.readthedocs.org/media/pdf/flask-login/latest/flask-login.pdf -> for flask-login 
+
 # TO-DO
 - Managing login - make it expandable so that university accounts may be used
 - Modeling server-side database - how will we store the information?

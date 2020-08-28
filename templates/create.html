@@ -1,0 +1,26 @@
+<html>
+	<head>
+		<title> Create a new session</title>
+	</head>
+
+	<body>
+		<div>
+			<h4> Welcome back {{ current_user.name }}! </h4> 
+			<h1> Create a new session! </h1>
+
+			{% if not new_id %}
+			<form method="POST" action="/create">
+				<label form="password"> Optional passcode: </label>
+				<input type="text" name="password" id="password">
+			</form>
+			{% else %}
+			<div>
+				<h1> Your meeting code is: {{ new_id }} <h1>
+				{% if %}
+				{% %}
+			</div>
+
+			{% endif %}
+		</div>
+	</body>
+</html>
