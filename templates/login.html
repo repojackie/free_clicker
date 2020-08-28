@@ -6,14 +6,20 @@
 	<body>
 		<h1> Login here </h1>
 
+		<div>
+		{% for message in messages %}
+			<h1> message </h1>
+		{% endfor %}
+		</div>
+
 		{% if verified is true  %} 
 		<div>
 			<form action="/login" method="POST">
-				<label for="username"> Username: </label>
-				<input type="text" name="username" id="username">
+				<label for="username_verified"> Username: </label>
+				<input type="text" name="username_verified" id="username_verified">
 				<br>
-				<label for="password"> Password: </label>
-				<input type="password" name="password" id="password">
+				<label for="password_verified"> Password: </label>
+				<input type="password" name="password_verified" id="password_verified">
 
 				<input type="submit" name="submit" id="submit" value="Login">
 			</form>

@@ -61,7 +61,18 @@ def login():
             # how to manage signing in on the same page?
             return render_template('login.html', verified=True)
 
+        username_verified = request.form.get('username_verified')
+        if username_verified is not None:
+            # checking to see if these things are in the db
+            password_verified = request.form['password_verified']
+            user = User.objects(username=username_verified, password=password_verified).first()
+            if user:
+                login_user(user)
+                return redirect(url_for(classes))
+            else:
+                return render_template('login.html', messages="Username/password incorrect. Have you already made an account?", verified=False)
 
+    
         username = request.form['username']
         password = request.form['password']
         password2 = request.form['password2']
@@ -77,6 +88,10 @@ def login():
             messages.append("Please enter an email!")
 
         if (len(messages) == 0):
+            user = User(username=username, email=email, password=password)
+            db.session.add(user)
+            db.session.commit()
+            login_user(user)
             return redirect(url_for('classes'))
 
     return render_template('login.html', messages=messages, verified=False)
