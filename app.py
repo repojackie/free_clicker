@@ -16,12 +16,12 @@ login_manager.login_view = 'login'
 socketio = SocketIO(app)
 
 @login_manager.user_loader
-def load_user(user_id):
+def load_user(id):
     """ 
     this callback is used to reload the user object from the user
     ID stored in session 
     """
-    return User.get(user_id)
+    return User.query.get(int(id))
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
@@ -36,12 +36,12 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(80))
 
     # unsure about this - list of joined sessions
-    sessions = db.Column(db.Text())
+    sessions = db.relationship('Rooms', backref='User', lazy=True)
 
 class Rooms(db.Model):
     __tablename__ = "Rooms"
     id = db.Column(db.Integer, primary_key=True)
-    owner = db.relationship("User", ForeignKey('User.username')) # links to username (!!)
+    owner = db.Column("User", db.ForeignKey('User.username')) # links to username (!!)
     room_key = db.Column(db.String(20), unique=True)
     room_pwd = db.Column(db.String(20))
 
@@ -55,6 +55,7 @@ def info():
 def login():
     # should use WTForms but eh
     messages = []
+
     if request.method == "POST":
         # someone already has an account who wants to sign in
         if request.form.get('verify') is not None and request.form['verify']  == 'I already have an account':
@@ -66,11 +67,13 @@ def login():
             # checking to see if these things are in the db
             password_verified = request.form['password_verified']
             user = User.query.filter_by(username=username_verified, password=password_verified).first()
+            print(user)
             if user:
                 login_user(user)
-                return redirect(url_for(classes))
+                return redirect(url_for('classes'))
             else:
-                return render_template('login.html', messages="Username/password incorrect. Have you already made an account?", verified=False)
+                messages.append("Username/password incorrect. Have you already made an account?")
+                return render_template('login.html', messages=messages, verified=False)
 
     
         username = request.form['username']
@@ -94,7 +97,7 @@ def login():
             login_user(user)
             return redirect(url_for('classes'))
 
-    return render_template('login.html', messages=messages, verified=False)
+    return render_template('login.html', len_messages=len(messages), messages=messages, verified=False)
 
 # select classes page
     # Room page - Owner, key to room, attendees 
@@ -102,39 +105,47 @@ def login():
 @login_required
 def classes():
     if request.method == "POST":
-        # check if it is create new post 
+        # check if it is create new class
+        if request.form.get('start') is not None:
+            # start a session owned by the user
+            pass
+        elif request.form.get('join') is not None:
+            # join a session owned by another user
+            pass
+        elif request.form.get('create_add') is not None:
+            # create a new session or add an existing session
+            return(render_template('create.html'))
 
-        # join existing 
-
-        # or host ready made session
-        pass
     return render_template('classes.html')
 
 # for creating new classes/sessions
-@app.route('/create')
+@app.route('/create', methods=["GET", "POST"])
 def create():
-    owner = current_user.name 
+    owner = current_user.username
 
     # autogen unique id, 10 digits
-    new_id = random.random() * 10
+    new_id = random.random() * 10               # lets find a new function for this
+    room_pwd = ""
+    passcode = ""
 
     # passcode for entry?
     if request.method == "POST":
-        passcode = request.form["passcode"]
+        passcode = request.form["password"]
         if len(passcode) > 0:
             room_pwd = passcode
 
     # put the new session into the db!
     try:
-        new_session = Rooms(owner=ownder, room_key=new_id, room_pwd=room_pwd)
+        new_session = Rooms(owner=owner, room_key=new_id, room_pwd=room_pwd)
         db.session.add(new_session)
         db.session.commit()
     except:
         # in case an existing ID is somehow used-- this is not very scalable
         new_id = random.random() * 10
-        new_session = Rooms(owner=ownder, room_key=new_id, room_pwd=room_pwd)
+        new_session = Rooms(owner=owner, room_key=new_id, room_pwd=room_pwd)
         db.session.add(new_session)
         db.session.commit()
+        return '<h1> Looks like something went wrong. </h1>'
 
     return render_template('create.html', new_id=new_id, passcode=passcode)
 

@@ -4,5 +4,49 @@
 	</head>
 
 	<body>
+		{% if join_session is true %}
+		<div>
+			<h1> Join sessions! </h1>
+
+			{% for session in sessions %}
+			<h2> session </h2>
+
+			<label for="{{session}}"> Join </label>
+			<input type=submit value="{{session}}", name="{{session}}" >
+			{% endfor %}
+
+			<form action="/classes", method="POST">
+				<label for="start"> Start an existing session </label>
+				<input type="submit" name="start" id="start" value="Start a session">
+			</form>
+
+		</div>
+
+		{% else %}
+		<div>
+			<h1> Start a session </h1>
+
+			{% for session in sessions %}
+			<h2> session </h1>
+
+			<label for="{{session}}"> Start this session </label>
+			<input type="submit" value="{{session}}" name="{{session}}">
+			{% endfor %}
+
+			<form action="/classes", method="POST">
+				<label for="join"> Join an existing session </label>
+				<input type="submit" name="join" id="join" value="Join a session">
+			</form>
+		</div>
+
+		{% endif %}
+
+		<div>
+			<form action="/classes", method="POST">
+				<label for="create_add"> Create or add a new class </label>
+				<input type="submit" name="create_add" id="create_add" value="GO">
+			</form>
+		</div>
+
 	</body>
 </html>

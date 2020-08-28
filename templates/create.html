@@ -12,12 +12,13 @@
 			<form method="POST" action="/create">
 				<label form="password"> Optional passcode: </label>
 				<input type="text" name="password" id="password">
+
+				<input type="submit" id="submit" name="submit" value="GO!">
 			</form>
 			{% else %}
 			<div>
-				<h1> Your meeting code is: {{ new_id }} <h1>
-				{% if %}
-				{% %}
+				<h1> Your meeting code is: {{ new_id }} </h1>
+				<h2> The passcode is: {{ passcode }} </h2>
 			</div>
 
 			{% endif %}
