@@ -9,7 +9,7 @@
 			<h1> Join sessions! </h1>
 
 			{% for session in sessions %}
-			<h2> session </h2>
+			<h2> {{ session }} </h2>
 			<hr>
 			<label for="{{session}}"> Join </label>
 			<input type=submit value="{{session}}", name="{{session}}" >
@@ -29,7 +29,7 @@
 
 			{% for session in sessions %}
 			<hr>
-			<h2> session </h1>
+			<h2> {{session}} </h1>
 
 			<label for="{{session}}"> Start this session </label>
 			<input type="submit" value="{{session}}" name="{{session}}">
