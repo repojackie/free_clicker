@@ -1,0 +1,27 @@
+<html>
+	<head>
+		<title> Join an existing session </title>
+	</head>
+
+	<body>
+		<div>
+			<form>
+				<div>
+					<h4> {{ message }} </h4>
+				</div>
+				<form action="/join_existing" method="POST">
+					<label for="code"> Enter the code for the session you wish to join </label>
+					<input type="text" name="code" id="code">
+
+					<hr>
+					<label for="pass"> If there is a password for your session, please enter it here </label>
+
+					<input type="text" name="pass" id="pass">
+
+					<input type="submit" name="submit" value="Join">
+				</form>
+			</form>
+		</div>
+	</body>
+</html>
+

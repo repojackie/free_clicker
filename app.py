@@ -105,18 +105,21 @@ def login():
 @login_required
 def classes():
     if request.method == "POST":
-        # check if it is create new class
+        # start a ready-made session
         if request.form.get('start') is not None:
             # query database for classes owned by user 
             sessions = Rooms.query.all(owner=current_user.username)
     
             return render_template('classes.html', sessions=sessions)
+        # join someone elses session
         elif request.form.get('join') is not None:
-            sessions = User.query.filter_by(username=current_user.username)
-            print(sessions)
+            tmp_sesh = User.query.filter_by(username=current_user.username).first()
+            sessions = tmp_sesh.sessions
 
+            print(sessions)
             # join a session owned by another user
             return render_template('classes.html', sessions=sessions)
+        # create a session or add a new session to join
         elif request.form.get('create_add') is not None:
             # create a new session or add an existing session
             return(render_template('create.html'))
@@ -135,6 +138,9 @@ def create():
 
     # passcode for entry?
     if request.method == "POST":
+        if request.form.get('join_existing') is not None:
+            # for joining an existing session 
+            return redirect(url_for('join_existing'))
         passcode = request.form["password"]
         if len(passcode) > 0:
             room_pwd = passcode
@@ -153,6 +159,25 @@ def create():
         return '<h1> Looks like something went wrong. </h1>'
 
     return render_template('create.html', new_id=new_id, passcode=passcode)
+
+@app.route('/join_existing', methods=["GET", "POST"])
+def join_existing():
+    if request.method == "POST":
+        room = request.form.get['code']
+        pwd = request.form.get['pass']
+        joinable = Rooms.query.filter_by(room_key=room, room_pwd=pwd).first()
+        
+        if joinable is not None:
+            # add the user to the session
+            curr_user = User.query.filter_by(username=current_user.username).first()
+            curr_user.sessions = curr_user.sessions + ' , '  + room 
+            db.session.commit()
+            return redirect(url_for('classes'))
+
+        else:
+            message = "The session code and/or the password was incorrect. Are you sure the session exists?"
+            return render_template('join_existing.html', message=message)
+    return render_template('join_existing.html')
 
 # student view - multiple choice/multimedia/short response
 @login_required
