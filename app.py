@@ -104,27 +104,38 @@ def login():
 @app.route('/classes', methods=['GET', 'POST'])
 @login_required
 def classes():
+    # sessions owned by the user
+    sessions = Rooms.query.filter_by(owner=current_user.username).all()
+    print("Sessions: " + str(sessions))
+
+    tmp_sesh = User.query.filter_by(username=current_user.username).first()
+    user_sessions  = tmp_sesh.sessions
+    print("User-owned sessions: " + str(user_sessions))
+    
+    # this part of the script is a little ugly
     if request.method == "POST":
         # start a ready-made session
         if request.form.get('start') is not None:
-            # query database for classes owned by user 
-            sessions = Rooms.query.all(owner=current_user.username)
-    
-            return render_template('classes.html', sessions=sessions)
+            return render_template('classes.html', sessions=sessions, join_session=False)
         # join someone elses session
         elif request.form.get('join') is not None:
-            tmp_sesh = User.query.filter_by(username=current_user.username).first()
-            sessions = tmp_sesh.sessions
-
-            print(sessions)
             # join a session owned by another user
-            return render_template('classes.html', sessions=sessions)
+            return render_template('classes.html', sessions=user_sessions, join_session=True)
         # create a session or add a new session to join
         elif request.form.get('create_add') is not None:
             # create a new session or add an existing session
             return(render_template('create.html'))
 
-    return render_template('classes.html')
+    return render_template('classes.html', join_session=True, sessions=user_sessions)
+
+def gen_num(digits):
+    """
+    Function for generating a random number with {digits} amount of digits
+    """
+    num = ""
+    for i in range(0, digits):
+        num = num + str(random.randint(0, 9))
+    return num
 
 # for creating new classes/sessions
 @app.route('/create', methods=["GET", "POST"])
@@ -132,7 +143,7 @@ def create():
     owner = current_user.username
 
     # autogen unique id, 10 digits
-    new_id = random.random() * 10               # lets find a new function for this
+    new_id = gen_num(10)
     room_pwd = ""
     passcode = ""
 
@@ -163,8 +174,8 @@ def create():
 @app.route('/join_existing', methods=["GET", "POST"])
 def join_existing():
     if request.method == "POST":
-        room = request.form.get['code']
-        pwd = request.form.get['pass']
+        room = request.form.get('code')
+        pwd = request.form.get('pass')
         joinable = Rooms.query.filter_by(room_key=room, room_pwd=pwd).first()
         
         if joinable is not None:
@@ -174,9 +185,8 @@ def join_existing():
             db.session.commit()
             return redirect(url_for('classes'))
 
-        else:
-            message = "The session code and/or the password was incorrect. Are you sure the session exists?"
-            return render_template('join_existing.html', message=message)
+        message = "The session code and/or the password was incorrect. Are you sure the session exists?"
+        return render_template('join_existing.html', message=message)
     return render_template('join_existing.html')
 
 # student view - multiple choice/multimedia/short response

@@ -29,10 +29,10 @@
 
 			{% for session in sessions %}
 			<hr>
-			<h2> {{session}} </h1>
+			<h2> {{ session }} </h2>
 
-			<label for="{{session}}"> Start this session </label>
-			<input type="submit" value="{{session}}" name="{{session}}">
+			<label for="{{ session }}"> Start this session </label>
+			<input type="submit" value="{{ session }}" name="{{ session }}">
 			<hr>
 			{% endfor %}
 
