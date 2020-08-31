@@ -11,6 +11,12 @@ https://buildmedia.readthedocs.org/media/pdf/flask-login/latest/flask-login.pdf 
 
 https://flask-sqlalchemy.palletsprojects.com/en/2.x/models/ -> for dealing with models and one-to-many relationships
 
+https://realpython.com/python-modules-packages/ -> for modules/packages/relative imports
+
+https://hackingandslacking.com/configuring-your-flask-application-4e5341d7affb -> configuring flask
+
+https://pythonbasics.org/flask-boilerplate/ -> a good boilerplate
+
 # TO-DO
 - Managing login - make it expandable so that university accounts may be used
 - Modeling server-side database - how will we store the information?

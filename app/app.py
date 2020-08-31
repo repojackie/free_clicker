@@ -1,49 +1,37 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for, Blueprint
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_login import UserMixin, login_user, login_required, logout_user, current_user
 import random
+from exts import db, login_manager 
+from utils import gen_num
+from models import User, Rooms
+import config
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'anarbitrarykeysowhatevs123'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Database.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+def create_app(config_object=config.DevConfig):
+    main = Flask(__name__)
+    main.config.from_object(config_object)
+    register_extensions(main)
+    return main
 
-db = SQLAlchemy(app)
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
-socketio = SocketIO(app)
+def register_extensions(main):
+    db.init_app(main)
+    login_manager.init_app(main)
+    login_manager.login_view = 'login'
+    
+    @login_manager.user_loader
+    def load_user(id):
+        """ 
+        this callback is used to reload the user object from the user
+        ID stored in session 
+        """
+        return User.query.get(int(id))
 
-@login_manager.user_loader
-def load_user(id):
-    """ 
-    this callback is used to reload the user object from the user
-    ID stored in session 
-    """
-    return User.query.get(int(id))
-
-@login_manager.unauthorized_handler
-def unauthorized_callback():
-    return redirect(url_for('login'))
-
-class User(UserMixin, db.Model):
-    __tablename__ = "User"
-
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(15), unique=True)
-    email = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(80))
-
-    # unsure about this - list of joined sessions
-    sessions = db.relationship('Rooms', backref='User', lazy=True)
-
-class Rooms(db.Model):
-    __tablename__ = "Rooms"
-    id = db.Column(db.Integer, primary_key=True)
-    owner = db.Column("User", db.ForeignKey('User.username')) # links to username (!!)
-    room_key = db.Column(db.String(20), unique=True)
-    room_pwd = db.Column(db.String(20))
+    @login_manager.unauthorized_handler
+    def unauthorized_callback():
+        return redirect(url_for('app.login'))
+    
+    return main
 
 @app.route('/')
 def info():
@@ -70,7 +58,7 @@ def login():
             print(user)
             if user:
                 login_user(user)
-                return redirect(url_for('classes'))
+                return redirect(url_for("app.classes"))
             else:
                 messages.append("Username/password incorrect. Have you already made an account?")
                 return render_template('login.html', messages=messages, verified=False)
@@ -95,9 +83,27 @@ def login():
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            return redirect(url_for('classes'))
+            return redirect(url_for('app.classes'))
 
     return render_template('login.html', len_messages=len(messages), messages=messages, verified=False)
+
+def get_room_info(rooms):
+    """
+    :inputs: list of Rooms
+    
+    :outputs: list of Rooms owner, name, and code
+    """
+    owner = []
+    code = [] 
+    pwd = []
+
+    for room in rooms:
+        this_room = Rooms.query.filter_by(id=room.id).first()
+        owner.append(this_room.owner)
+        code.append(this_room.room_key)
+        pwd.append(this_room.room_pwd)
+
+    return owner, code, pwd
 
 # select classes page
     # Room page - Owner, key to room, attendees 
@@ -107,7 +113,8 @@ def classes():
     # sessions owned by the user
     sessions = Rooms.query.filter_by(owner=current_user.username).all()
     print("Sessions: " + str(sessions))
-
+    print("Running the ID thing: " + str(get_room_info(sessions)))
+    
     tmp_sesh = User.query.filter_by(username=current_user.username).first()
     user_sessions  = tmp_sesh.sessions
     print("User-owned sessions: " + str(user_sessions))
@@ -128,15 +135,6 @@ def classes():
 
     return render_template('classes.html', join_session=True, sessions=user_sessions)
 
-def gen_num(digits):
-    """
-    Function for generating a random number with {digits} amount of digits
-    """
-    num = ""
-    for i in range(0, digits):
-        num = num + str(random.randint(0, 9))
-    return num
-
 # for creating new classes/sessions
 @app.route('/create', methods=["GET", "POST"])
 def create():
@@ -151,7 +149,7 @@ def create():
     if request.method == "POST":
         if request.form.get('join_existing') is not None:
             # for joining an existing session 
-            return redirect(url_for('join_existing'))
+            return redirect(url_for('app.join_existing'))
         passcode = request.form["password"]
         if len(passcode) > 0:
             room_pwd = passcode
@@ -183,7 +181,7 @@ def join_existing():
             curr_user = User.query.filter_by(username=current_user.username).first()
             curr_user.sessions = curr_user.sessions + ' , '  + room 
             db.session.commit()
-            return redirect(url_for('classes'))
+            return redirect(url_for('app.classes'))
 
         message = "The session code and/or the password was incorrect. Are you sure the session exists?"
         return render_template('join_existing.html', message=message)
@@ -208,6 +206,9 @@ def student():
 def teacher():
     # 
     pass
+
 if __name__ == "__main__":
+    app = create_app()
+    socketio = SocketIO(app)
     socketio.run(app, debug=True)
 
