@@ -17,6 +17,7 @@
 			{% endfor %}
 
 			<form action="/classes", method="POST">
+				{{ form.csrf_token }}
 				<label for="start"> Start an existing session </label>
 				<input type="submit" name="start" id="start" value="Start a session">
 			</form>
@@ -38,6 +39,7 @@
 
 			<form action="/classes", method="POST">
 				<label for="join"> Join an existing session </label>
+				{{ form.csrf_token }}
 				<input type="submit" name="join" id="join" value="Join a session">
 			</form>
 		</div>
@@ -47,6 +49,7 @@
 		<div>
 			<form action="/classes", method="POST">
 				<label for="create_add"> Create or add a new class </label>
+				{{ form.csrf_token }}
 				<input type="submit" name="create_add" id="create_add" value="GO">
 			</form>
 		</div>

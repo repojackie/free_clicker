@@ -10,6 +10,7 @@
 				</div>
 				<form action="/join_existing" method="POST">
 					<label for="code"> Enter the code for the session you wish to join </label>
+				{{ form.csrf_token }}
 					<input type="text" name="code" id="code">
 
 					<hr>

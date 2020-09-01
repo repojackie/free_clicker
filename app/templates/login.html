@@ -19,6 +19,7 @@
 			<form action="/login" method="POST">
 				<label for="username_verified"> Username: </label>
 				<input type="text" name="username_verified" id="username_verified">
+				{{ form.csrf_token }}
 				<br>
 				<label for="password_verified"> Password: </label>
 				<input type="password" name="password_verified" id="password_verified">
@@ -32,6 +33,7 @@
 		<div>
                         <form action="/login" method="POST">
                                 <label for="username"> Username: </label>
+				{{ form.csrf_token }}
                                 <input type="text" name="username" id="username">
                                 <br>
                                 <label for="password"> Password: </label>
@@ -53,6 +55,7 @@
 		<div>
 			<form action="/login" method="POST">
 				<label for="verify"> Already have an account? </label>
+				{{ form.csrf_token }}
 				<input type="submit" name="verify" id="verify" value="I already have an account">
 			</form>
 		</div>

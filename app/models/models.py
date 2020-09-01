@@ -4,6 +4,9 @@ from flask_login import UserMixin
 class User(UserMixin, db.Model):
     __tablename__ = "User"
 
+    # tmp : what is this?
+    __table_args__ = {'extend_existing': True}
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
@@ -19,3 +22,5 @@ class Rooms(db.Model):
     room_key = db.Column(db.String(20), unique=True)
     room_pwd = db.Column(db.String(20))
 
+    # tmp : do I even need this here?
+    __table_args__ = {'extend_existing': True}

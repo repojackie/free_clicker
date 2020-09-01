@@ -7,17 +7,16 @@ from exts import db, login_manager
 from utils import gen_num
 from app.models import models
 import config
-from init import create_app
 
 router = Blueprint('router', __name__, url_prefix='')
 
-@app.route('/')
+@router.route('/')
 def info():
     return render_template('info.html')
 
 # sign in page 
     # Student table - username, password, respective email
-@app.route('/login', methods=['GET', 'POST'])
+@router.route('/login', methods=['GET', 'POST'])
 def login():
     # should use WTForms but eh
     messages = []
@@ -85,7 +84,7 @@ def get_room_info(rooms):
 
 # select classes page
     # Room page - Owner, key to room, attendees 
-@app.route('/classes', methods=['GET', 'POST'])
+@router.route('/classes', methods=['GET', 'POST'])
 @login_required
 def classes():
     # sessions owned by the user
@@ -114,7 +113,7 @@ def classes():
     return render_template('classes.html', join_session=True, sessions=user_sessions)
 
 # for creating new classes/sessions
-@app.route('/create', methods=["GET", "POST"])
+@router.route('/create', methods=["GET", "POST"])
 def create():
     owner = current_user.username
 
@@ -147,7 +146,7 @@ def create():
 
     return render_template('create.html', new_id=new_id, passcode=passcode)
 
-@app.route('/join_existing', methods=["GET", "POST"])
+@router.route('/join_existing', methods=["GET", "POST"])
 def join_existing():
     if request.method == "POST":
         room = request.form.get('code')
@@ -167,7 +166,7 @@ def join_existing():
 
 # student view - multiple choice/multimedia/short response
 @login_required
-@app.route('/student')
+@router.route('/student')
 def student():
     # make sure that the session the student is joining is live
 
@@ -180,13 +179,7 @@ def student():
 # teacher view - serve out questions i
     # collect and save responses onto local computer from the students
 @login_required
-@app.route('/teacher')
+@router.route('/teacher')
 def teacher():
     # 
     pass
-
-if __name__ == "__main__":
-    app = create_app()
-    socketio = SocketIO(app)
-    socketio.run(app, debug=True)
-
