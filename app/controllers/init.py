@@ -5,33 +5,11 @@ from flask_login import UserMixin, login_user, login_required, logout_user, curr
 import random
 from exts import db, login_manager 
 from utils import gen_num
-from models import User, Rooms
+from app.models import models
 import config
+from init import create_app
 
-def create_app(config_object=config.DevConfig):
-    main = Flask(__name__)
-    main.config.from_object(config_object)
-    register_extensions(main)
-    return main
-
-def register_extensions(main):
-    db.init_app(main)
-    login_manager.init_app(main)
-    login_manager.login_view = 'login'
-    
-    @login_manager.user_loader
-    def load_user(id):
-        """ 
-        this callback is used to reload the user object from the user
-        ID stored in session 
-        """
-        return User.query.get(int(id))
-
-    @login_manager.unauthorized_handler
-    def unauthorized_callback():
-        return redirect(url_for('app.login'))
-    
-    return main
+router = Blueprint('router', __name__, url_prefix='')
 
 @app.route('/')
 def info():
