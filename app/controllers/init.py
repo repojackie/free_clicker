@@ -2,13 +2,18 @@ from flask import Flask, request, render_template, redirect, url_for, Blueprint
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, login_required, logout_user, current_user
+from flask_wtf.csrf import CSRFError
 import random
 from exts import db, login_manager 
 from utils import gen_num
-from app.models import models
+from models.models import User, Rooms
 import config
 
 router = Blueprint('router', __name__, url_prefix='')
+
+@router.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return jsonify({"Error:":e.description}), 400
 
 @router.route('/')
 def info():

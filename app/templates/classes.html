@@ -39,7 +39,7 @@
 
 			<form action="/classes", method="POST">
 				<label for="join"> Join an existing session </label>
-				{{ form.csrf_token }}
+				<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 				<input type="submit" name="join" id="join" value="Join a session">
 			</form>
 		</div>
@@ -49,8 +49,8 @@
 		<div>
 			<form action="/classes", method="POST">
 				<label for="create_add"> Create or add a new class </label>
-				{{ form.csrf_token }}
 				<input type="submit" name="create_add" id="create_add" value="GO">
+				<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 			</form>
 		</div>
 

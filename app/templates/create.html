@@ -13,9 +13,9 @@
 				<label form="password"> Optional passcode: </label>
 				<input type="text" name="password" id="password">
 
-				{{ form.csrf_token }}
 				<input type="submit" id="submit" name="submit" value="GO!">
 
+				<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 				<div>
 					<input type="submit" id="join_existing" name="join_existing" value="Join Existing Session">
 				</div>

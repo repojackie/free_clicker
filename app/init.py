@@ -6,7 +6,7 @@ if project_path not in sys.path:
     sys.path.insert(0, project_path)
 
 from flask import Flask
-from flask_wtf.csrf import CsrfProtect
+from flask_wtf.csrf import CSRFProtect, CSRFError
 from config import config
 from models import models
 from exts import db, login_manager
@@ -15,7 +15,7 @@ from controllers.init import router
 def create_app(config_object=config.DevConfig):
     main = Flask(__name__)
     main.config.from_object(config_object)
-    CsrfProtect(main)
+    CSRFProtect(main)
     register_extensions(main)
     main.register_blueprint(router)
     return main

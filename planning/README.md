@@ -17,10 +17,17 @@ https://hackingandslacking.com/configuring-your-flask-application-4e5341d7affb -
 
 https://pythonbasics.org/flask-boilerplate/ -> a good boilerplate
 
+ [] https://realpython.com/token-based-authentication-with-flask/ -> token-based authentication
+
+ [] https://damyanon.net/post/flask-series-security/ -> more security for flask
+
+ [] https://towardsdatascience.com/how-to-secure-your-machine-learning-app-with-csrf-protection-506c3383f9e5 -> csrf implementation
 # TO-DO
 - Managing login - make it expandable so that university accounts may be used
 - Modeling server-side database - how will we store the information?
 - Each user has access to their account and can make their own sessions - ability to start/stop sessions modeled after flask chat rooms
 - User can join available sessions and remember the person who initiated the sessions
+- CSRF protection
+- Password hashing
 
 

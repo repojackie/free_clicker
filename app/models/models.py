@@ -22,5 +22,6 @@ class Rooms(db.Model):
     room_key = db.Column(db.String(20), unique=True)
     room_pwd = db.Column(db.String(20))
 
-    # tmp : do I even need this here?
+    # tmp : do I even need this here
+
     __table_args__ = {'extend_existing': True}

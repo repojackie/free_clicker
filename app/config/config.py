@@ -1,9 +1,10 @@
 class Config:
     """ Base config """
-    SECRET_KEY = ['sdvlnaskvnsdlnjvsdfvb'] # should use os.environ.get() 
+    SECRET_KEY = 'sdvlnaskvnsdlnjvsdfvb' # should use os.environ.get() 
     STATIC_FOLDER = 'static'
     TEMPLATE_FOLDER = 'templates'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    WTF_CSRF_TIME_LIMIT = 3600
 
 class ProdConfig(Config):
     FLASK_ENV = 'production'
