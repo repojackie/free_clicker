@@ -25,3 +25,5 @@ class Rooms(db.Model):
     # tmp : do I even need this here
 
     __table_args__ = {'extend_existing': True}
+
+

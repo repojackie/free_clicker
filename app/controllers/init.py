@@ -40,7 +40,7 @@ def login():
             print(user)
             if user:
                 login_user(user)
-                return redirect(url_for("app.classes"))
+                return redirect(url_for("router.classes"))
             else:
                 messages.append("Username/password incorrect. Have you already made an account?")
                 return render_template('login.html', messages=messages, verified=False)
@@ -50,7 +50,6 @@ def login():
         password = request.form['password']
         password2 = request.form['password2']
         email = request.form['email']
-
         if len(username) < 10:
             messages.append("Username is too short!")
         if password != password2:
@@ -65,7 +64,7 @@ def login():
             db.session.add(user)
             db.session.commit()
             login_user(user)
-            return redirect(url_for('app.classes'))
+            return redirect(url_for('router.classes'))
 
     return render_template('login.html', len_messages=len(messages), messages=messages, verified=False)
 
@@ -131,7 +130,7 @@ def create():
     if request.method == "POST":
         if request.form.get('join_existing') is not None:
             # for joining an existing session 
-            return redirect(url_for('app.join_existing'))
+            return redirect(url_for('router.join_existing'))
         passcode = request.form["password"]
         if len(passcode) > 0:
             room_pwd = passcode

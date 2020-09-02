@@ -17,7 +17,9 @@
 			{% endfor %}
 
 			<form action="/classes", method="POST">
-				{{ form.csrf_token }}
+				
+				<label for="join"> Join an existing session </label>
+				<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 				<label for="start"> Start an existing session </label>
 				<input type="submit" name="start" id="start" value="Start a session">
 			</form>

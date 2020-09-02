@@ -8,7 +8,8 @@ if project_path not in sys.path:
 from flask import Flask
 from flask_wtf.csrf import CSRFProtect, CSRFError
 from config import config
-from models import models
+
+from models.models import User
 from exts import db, login_manager
 from controllers.init import router
 

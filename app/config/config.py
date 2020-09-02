@@ -16,4 +16,4 @@ class DevConfig(Config):
     Flask_ENV = 'development'
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///Database.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:////home/jackie/Documents/projects/free_clicker/app/Database.db'

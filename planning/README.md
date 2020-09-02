@@ -27,7 +27,8 @@ https://pythonbasics.org/flask-boilerplate/ -> a good boilerplate
 - Modeling server-side database - how will we store the information?
 - Each user has access to their account and can make their own sessions - ability to start/stop sessions modeled after flask chat rooms
 - User can join available sessions and remember the person who initiated the sessions
-- CSRF protection
+	- sessions/tokens/cookies
 - Password hashing
+- Show room code, object stuff, whatever
 
 

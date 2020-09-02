@@ -2,6 +2,7 @@
 Helper functions to try and steer away from the massive file 
 that is being made in app.py
 """
+import random
 
 def gen_num(digits):
     """
